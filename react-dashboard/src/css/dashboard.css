@@ -1,0 +1,46 @@
+.paddingall {
+    padding: 0.8rem 0.8rem 0.8rem 1.5rem;
+}
+
+.userpricetitle {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.userpricesubtitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.iconstyle {
+    display: flex;
+    align-items: center;
+    padding-left: 1.4rem;
+}
+
+.iconstylewhite {
+    color: aliceblue;
+}
+
+.gradient {
+    background: #bdc3c7;
+    background: -webkit-linear-gradient(to top, #2c3e50, #bdc3c7);
+    background: linear-gradient(to top, #2c3e50, #bdc3c7);
+}
+
+.gradientlight {
+    background-color: rgb(53, 138, 148);
+    background: linear-gradient(158deg, rgba(53, 138, 148, 1), rgb(91, 180, 96, 1) 100%);
+}
+
+.bg {
+    min-height: 100vh;
+    background: #ECEFF1;
+    background: linear-gradient(158deg, rgb(224, 224, 224) 0%, rrgb(233, 237, 254) 100%);
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
