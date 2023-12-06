@@ -12,10 +12,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Move useLocation here
 import { useAppStore } from "../../appStore";
 import { FaBagShopping, FaCircleInfo, FaHouse, FaUsers } from "react-icons/fa6";
 import { IoIosSettings } from "react-icons/io";
+import { FaCartShopping } from "react-icons/fa6";
 
 const drawerWidth = 240;
 
@@ -69,7 +70,9 @@ const Drawer = styled(MuiDrawer, {
 export default function Sidebar() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const open = useAppStore((state) => state.dopen);
+  const isCurrentRoute = (route) => location.pathname === route;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -95,10 +98,15 @@ export default function Sidebar() {
             }}
           >
             <ListItemButton
+              selected={isCurrentRoute("/")}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                background: isCurrentRoute("/") ? "#ECEFF1" : "transparent",
+                backgroundImage: isCurrentRoute("/")
+                  ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                  : "none",
               }}
             >
               <ListItemIcon
@@ -121,10 +129,17 @@ export default function Sidebar() {
             }}
           >
             <ListItemButton
+              selected={isCurrentRoute("/users")}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                background: isCurrentRoute("/users")
+                  ? "#ECEFF1"
+                  : "transparent",
+                backgroundImage: isCurrentRoute("/users")
+                  ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                  : "none",
               }}
             >
               <ListItemIcon
@@ -147,10 +162,17 @@ export default function Sidebar() {
             }}
           >
             <ListItemButton
+              selected={isCurrentRoute("/products")}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                background: isCurrentRoute("/products")
+                  ? "#ECEFF1"
+                  : "transparent",
+                backgroundImage: isCurrentRoute("/products")
+                  ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                  : "none",
               }}
             >
               <ListItemIcon
@@ -168,6 +190,37 @@ export default function Sidebar() {
               />
             </ListItemButton>
           </ListItem>
+          <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={() => {
+              navigate("/cart");
+            }}
+          >
+            <ListItemButton
+              selected={isCurrentRoute("/cart")}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+                background: isCurrentRoute("/cart") ? "#ECEFF1" : "transparent",
+                backgroundImage: isCurrentRoute("/cart")
+                  ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                  : "none",
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <FaCartShopping fontSize={"1.6rem"} />
+              </ListItemIcon>
+              <ListItemText primary={"CART"} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
         <List>
@@ -179,10 +232,17 @@ export default function Sidebar() {
             }}
           >
             <ListItemButton
+              selected={isCurrentRoute("/about")}
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                background: isCurrentRoute("/about")
+                  ? "#ECEFF1"
+                  : "transparent",
+                backgroundImage: isCurrentRoute("/about")
+                  ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                  : "none",
               }}
             >
               <ListItemIcon
@@ -206,10 +266,17 @@ export default function Sidebar() {
           }}
         >
           <ListItemButton
+            selected={isCurrentRoute("/setting")}
             sx={{
               minHeight: 48,
               justifyContent: open ? "initial" : "center",
               px: 2.5,
+              background: isCurrentRoute("/setting")
+                ? "#ECEFF1"
+                : "transparent",
+              backgroundImage: isCurrentRoute("/setting")
+                ? "linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 237, 254) 100%)"
+                : "none",
             }}
           >
             <ListItemIcon

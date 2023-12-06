@@ -6,17 +6,29 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import CircularProgress from "@mui/material/CircularProgress";
+import axios from "axios";
+import Button from "@mui/material/Button";
+import { Stack } from "@mui/system";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
+import Backdrop from "@mui/material/Backdrop";
 
 function Users() {
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
-    fetch("https://fakestoreapi.com/users")
-      .then((response) => response.json())
-      .then((data) => {
-        setRowData(data);
+    axios
+      .get("https://fakestoreapi.com/users")
+      .then((response) => {
+        setRowData(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -24,6 +36,55 @@ function Users() {
         setLoading(false);
       });
   }, []);
+  const navigate = useNavigate();
+
+  const handleEdit = (id) => {
+    navigate(`edit/${id}`);
+  };
+
+  const handleView = (id) => {
+    navigate(`detail/${id}`);
+  };
+
+  const handleDelete = (id) => {
+    setLoading2(true);
+    axios
+      .delete(`https://fakestoreapi.com/users/${id}`)
+      .then((response) => {
+        setLoading2(false);
+        setSuccessMessage("Delete successful!");
+        setModalOpen(true);
+      })
+      .catch((error) => {
+        setLoading2(false);
+        setErrorMessage("Error deleting user. Please try again.");
+        setModalOpen(true);
+      });
+  };
+
+  const ActionsRenderer = (params) => (
+    <Stack direction={"row"} spacing={2}>
+      <Button onClick={() => handleView(params.data.id)} size="small">
+        VIEW
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => handleEdit(params.data.id)}
+        color="success"
+        size="small"
+      >
+        EDIT
+      </Button>
+      <Button
+        variant="outlined"
+        onClick={() => handleDelete(params.data.id)}
+        color="error"
+        size="small"
+      >
+        DELETE
+      </Button>
+    </Stack>
+  );
 
   const [colDefs, setColDefs] = useState([
     {
@@ -42,7 +103,30 @@ function Users() {
     { field: "username", headerName: "Username" },
     { field: "email", headerName: "Email" },
     { field: "phone", headerName: "Phone" },
+    {
+      headerName: "Actions",
+      cellRenderer: ActionsRenderer,
+      suppressSorting: false,
+      suppressFilter: false,
+      width: 220,
+    },
   ]);
+
+  // const frameworkComponents = {
+  //   actionsRenderer: (params) => (
+  //     <div>
+  //       <button onClick={() => handleEdit(params.data.id)}>Edit</button>
+  //       <button onClick={() => handleView(params.data.id)}>View</button>
+  //       <button onClick={() => handleDelete(params.data.id)}>Delete</button>
+  //     </div>
+  //   ),
+  // };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
 
   const gridOptions = {
     pagination: true,
@@ -59,7 +143,8 @@ function Users() {
   };
 
   const searchStyle = {
-    width: "100%",
+    width: "50%",
+    marginLeft: "auto",
     padding: "10px 20px",
     borderRadius: 5,
     outline: 0,
@@ -77,7 +162,7 @@ function Users() {
   };
 
   return (
-    <>
+    <div className="bg">
       <Navbar />
       <Box height={35} />
       <Box sx={{ display: "flex" }}>
@@ -91,15 +176,35 @@ function Users() {
         >
           <div className="flex">
             <h1>USERS</h1>
-            <div>
+            <Stack direction={"row"} spacing={2}>
               <input
                 type="search"
                 style={searchStyle}
                 onChange={onFilterTextChange}
                 placeholder="Search ..."
               />
-            </div>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => {
+                  navigate("adduser");
+                }}
+              >
+                ADD USER
+              </Button>
+            </Stack>
           </div>
+          {loading2 && (
+            <Backdrop
+              sx={{
+                color: "#fff",
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+              }}
+              open={loading2}
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          )}
           {loading ? (
             <div
               style={{
@@ -121,13 +226,42 @@ function Users() {
                 gridOptions={gridOptions}
                 rowData={rowData}
                 columnDefs={colDefs}
-                // defaultColDef={{ flex: 1 }}
               />
             </div>
           )}
         </Box>
       </Box>
-    </>
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box
+          textAlign={"center"}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="div"
+            gutterBottom
+            color={successMessage === "Success" ? "red" : "green"}
+          >
+            {successMessage ? "Success" : "Error"}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {successMessage || errorMessage}
+          </Typography>
+          <Button onClick={handleCloseModal} sx={{ color: "black" }}>
+            OK
+          </Button>
+        </Box>
+      </Modal>
+    </div>
   );
 }
 
